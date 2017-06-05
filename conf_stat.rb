@@ -19,10 +19,8 @@ class Main
     userName = ask("Please Enter your User Name: ")
     password = ask("Please Enter your Password: ") {|q| q.echo = '*'}
     puts "===============================================".red
-
-    #rest.groups(baseURL,userName,password)
-    #rest.content(baseURL,userName,password)
-  
+    rest.content(baseURL,userName,password)
+    rest.groups(baseURL,userName,password)  
   end
 
 end
@@ -46,21 +44,59 @@ class Restclient
       #Parse the Json
       json = JSON.parse(response.body)
       #Print out the Title of Pages
+      puts "===============================================".blue
+      puts "           Page Title List and Page ID".blue
+      puts "===============================================".blue
       json["results"].each do |results|
-      print results["title"] , "||" , results["id"]
-      puts
+         print results["title"] , " || " , results["id"]
+         puts
       end 
-      puts "=======================================".red
+      puts "===============================================".red
       print "This Instance has ", json["size"] , " Pages"
       puts
-      puts "=======================================".red
+      puts "===============================================".red
     end # End Connection
 
   end
 
   def groups(baseURL,userName,password)
-    uri = URI("#{baseURL}/rest/experimental/group".strip)
-      Net::HTTP.start(uri.host, uri.port,
+    groups_arr = Array.new
+    uri = URI("#{baseURL}/rest/api/group".strip)
+    Net::HTTP.start(uri.host, uri.port,
+      :use_ssl => uri.scheme == 'https', 
+      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      request = Net::HTTP::Get.new uri.request_uri
+      request.basic_auth(userName, password)
+      response = http.request request # Net::HTTPResponse object
+      #Parse the Json
+      json = JSON.parse(response.body)
+      #Print out the groups
+      puts "===============================================".blue
+      puts "                List of Groups".blue
+      puts "===============================================".blue
+      json["results"].each do |results|
+        groups_arr.push results["name"]
+        print results["name"]
+        puts
+      end
+      puts "===============================================".red
+      print "This Instance has ", json["size"] , " Groups"
+      puts
+      puts "===============================================".red
+    end # End Connection
+    puts "===============================================".blue
+    puts "                List of Users".blue
+    puts "===============================================".blue
+    groups_arr.each do |gp|
+      users(gp,baseURL,userName,password)
+    end
+  end
+
+  # Work in Progress
+  def users(groupName,baseURL,userName,password)
+    uri = URI("#{baseURL}/rest/api/group/#{groupName}/member".strip)
+
+    Net::HTTP.start(uri.host, uri.port,
       :use_ssl => uri.scheme == 'https', 
       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
       request = Net::HTTP::Get.new uri.request_uri
@@ -69,21 +105,19 @@ class Restclient
       #Parse the Json
       json = JSON.parse(response.body)
       #Print out the Title of Pages
+      puts "===============================================".blue
+      print " List of Users in users in group " , groupName
+      puts
+      puts "===============================================".blue
       json["results"].each do |results|
-      print results["name"]
+        print results["username"]
+        puts
+      end 
+      puts "===============================================".red
+      print "Group ", groupName, " has ", json["size"] , " Users"
       puts
-      end
-      puts "=======================================".red
-      print "This Instance has ", json["size"] , " Groups"
-      puts
-      puts "=======================================".red
+      puts "===============================================".red
     end # End Connection
-
-  end
-
-  # Work in Progress
-  def users(baseURL,userName,password)
-    uri = URI("#{baseURL}/rest/api/group/confluence-administrators/member".strip)
   end
 
 end
