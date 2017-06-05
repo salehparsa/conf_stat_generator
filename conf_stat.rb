@@ -92,7 +92,6 @@ class Restclient
     end
   end
 
-  # Work in Progress
   def users(groupName,baseURL,userName,password)
     uri = URI("#{baseURL}/rest/api/group/#{groupName}/member".strip)
 
@@ -104,7 +103,7 @@ class Restclient
       response = http.request request # Net::HTTPResponse object
       #Parse the Json
       json = JSON.parse(response.body)
-      #Print out the Title of Pages
+      #Print out the List of Users
       puts "===============================================".blue
       print " List of Users in users in group " , groupName
       puts
