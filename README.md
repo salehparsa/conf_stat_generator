@@ -1,6 +1,13 @@
 # Atlassian Confluence Stat Generator
 
-This is a Ruby Scrip for generating statistic from your Confluence instance base on the REST API.
+This is a Ruby Scrip for generating reports from your Confluence instance base on the REST API.
+
+### Features:
+* List of Page Titles
+* List of Spaces, Space Keys and Types
+* List of Groups
+* List of Users
+
 
 #### Sample Out Put
 
@@ -28,8 +35,18 @@ Share your page with a team member (step 9 of 9) || 65546
 Test Home || 950274
 Saleh Parsa -Ruby || 1376257
 13 page? || 1867777
+admin’s Home || 2064386
 ===============================================
-This Instance has 13 Pages
+This Instance has 14 Pages
+===============================================
+===============================================
+           Space Name, key and type
+===============================================
+Demonstration Space || ds || global
+Test || TEST || global
+admin || ~admin || personal
+===============================================
+This Instance has 3 Spaces in Total
 ===============================================
 ===============================================
                 List of Groups
@@ -57,3 +74,4 @@ admin
 Group confluence-users has 1 Users
 ===============================================
 ```
+

@@ -20,6 +20,7 @@ class Main
     password = ask("Please Enter your Password: ") {|q| q.echo = '*'}
     puts "===============================================".red
     rest.content(baseURL,userName,password)
+    rest.spaces(baseURL,userName,password)
     rest.groups(baseURL,userName,password)  
   end
 
@@ -53,6 +54,33 @@ class Restclient
       end 
       puts "===============================================".red
       print "This Instance has ", json["size"] , " Pages"
+      puts
+      puts "===============================================".red
+    end # End Connection
+
+  end
+
+  def spaces(baseURL,userName,password)
+    uri = URI("#{baseURL}/rest/api/space".strip)
+
+    Net::HTTP.start(uri.host, uri.port,
+      :use_ssl => uri.scheme == 'https', 
+      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      request = Net::HTTP::Get.new uri.request_uri
+      request.basic_auth(userName, password)
+      response = http.request request # Net::HTTPResponse object
+      #Parse the Json
+      json = JSON.parse(response.body)
+      #Print out the Title of Pages
+      puts "===============================================".blue
+      puts "           Space Name, key and type".blue
+      puts "===============================================".blue
+      json["results"].each do |results|
+         print results["name"] , " || ", results["key"], " || " , results["type"]
+         puts
+      end 
+      puts "===============================================".red
+      print "This Instance has ", json["size"] , " Spaces in Total"
       puts
       puts "===============================================".red
     end # End Connection
