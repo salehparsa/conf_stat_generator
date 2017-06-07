@@ -29,10 +29,6 @@ end
 class Restclient
   attr_reader :uri
 
-# Implement a Auth method
-#  def basicauth()
-#  end
-
   def content(baseURL,userName,password)
     uri = URI("#{baseURL}/rest/api/content".strip)
 
@@ -71,7 +67,7 @@ class Restclient
       response = http.request request # Net::HTTPResponse object
       #Parse the Json
       json = JSON.parse(response.body)
-      #Print out the Title of Pages
+      #Print out the Title of Spaces
       puts "===============================================".blue
       puts "           Space Name, key and type".blue
       puts "===============================================".blue
