@@ -2,6 +2,7 @@ require 'net/https'
 require 'JSON'
 require 'highline/import'
 require 'colorize'
+require 'open-uri'    
 
 class Main
   attr_reader :rest,
@@ -22,6 +23,7 @@ class Main
     rest.content(baseURL,userName,password)
     rest.spaces(baseURL,userName,password)
     rest.groups(baseURL,userName,password)  
+    rest.audit_logs(baseURL,userName,password)
   end
 
 end
@@ -141,6 +143,31 @@ class Restclient
       puts
       puts "===============================================".red
     end # End Connection
+  end
+
+  def audit_logs(baseURL,userName,password)
+    uri = URI("#{baseURL}/rest/api/audit/".strip)
+
+    Net::HTTP.start(uri.host, uri.port,
+      :use_ssl => uri.scheme == 'https', 
+      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      request = Net::HTTP::Get.new uri.request_uri
+      request.basic_auth(userName, password)
+      response = http.request request # Net::HTTPResponse object
+      #Parse the Json
+      json = JSON.parse(response.body)
+      #Print out the Audit
+      puts "===============================================".blue
+      puts "                 Audit Logs".blue
+      puts "===============================================".blue
+      json["results"].each do |results|
+          puts results["author"].blue
+          puts results["remoteAddress"].blue
+          puts
+      end 
+
+    end # End Connection
+    
   end
 
 end
